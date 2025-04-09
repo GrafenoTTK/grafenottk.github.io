@@ -911,6 +911,7 @@
             });
 
             // Função para carregar os repositórios do GitHub
+// Função para carregar os repositórios do GitHub
 async function loadRepositories() {
     try {
         const response = await fetch('https://api.github.com/users/GrafenoTTK/repos');
@@ -925,34 +926,32 @@ async function loadRepositories() {
             return;
         }
         
-        // Para cada repositório, buscamos detalhes adicionais para obter informações sobre o conteúdo
+        // Para cada repositório, buscamos detalhes adicionais para encontrar o arquivo View
         const repoDetailsPromises = repos.map(async (repo) => {
             try {
-                // Verificamos se há uma imagem específica no repositório
+                // Verificamos se há um arquivo View no repositório
                 const contentsResponse = await fetch(`https://api.github.com/repos/GrafenoTTK/${repo.name}/contents`);
                 const contents = await contentsResponse.json();
                 
-                // Procuramos por imagens comuns de apresentação no repositório
-                const imageFiles = contents.filter(file => 
+                // Procuramos especificamente pelo arquivo "View" (View.png, View.jpg, etc.)
+                const viewFile = contents.find(file => 
                     file.type === 'file' && 
-                    (file.name.toLowerCase().includes('preview') || 
-                     file.name.toLowerCase().includes('screenshot') ||
-                     file.name.toLowerCase().includes('thumbnail') ||
-                     file.name.endsWith('.png') || 
-                     file.name.endsWith('.jpg') || 
-                     file.name.endsWith('.jpeg') || 
-                     file.name.endsWith('.gif'))
+                    (file.name === 'View' || 
+                     file.name === 'View.png' || 
+                     file.name === 'View.jpg' || 
+                     file.name === 'View.jpeg' || 
+                     file.name === 'View.gif')
                 );
                 
-                // Se encontramos alguma imagem, usamos a primeira
-                const imageUrl = imageFiles.length > 0 
-                    ? imageFiles[0].download_url 
+                // Se encontramos o arquivo View, usamos ele, senão usamos um fallback
+                const imageUrl = viewFile 
+                    ? viewFile.download_url 
                     : `https://opengraph.githubassets.com/1/GrafenoTTK/${repo.name}`; // Fallback para imagem gerada pelo GitHub
                 
                 return { ...repo, imageUrl };
             } catch (err) {
                 console.warn(`Não foi possível obter detalhes para ${repo.name}:`, err);
-                // Fallback: usar a API do OpenGraph do GitHub que gera uma imagem para qualquer repositório
+                // Fallback: usar a API do OpenGraph do GitHub
                 return { 
                     ...repo, 
                     imageUrl: `https://opengraph.githubassets.com/1/GrafenoTTK/${repo.name}`
