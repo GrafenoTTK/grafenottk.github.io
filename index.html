@@ -915,7 +915,13 @@
 async function loadRepositories() {
     try {
         const response = await fetch('https://api.github.com/users/GrafenoTTK/repos');
-        const repos = await response.json();
+        const allRepos = await response.json();
+        
+        // Filtrando os repositórios para excluir "GrafenoTTK" e "grafenottk.github.io"
+        const repos = allRepos.filter(repo => 
+            repo.name !== "GrafenoTTK" && 
+            repo.name !== "grafenottk.github.io"
+        );
         
         if (repos.length === 0) {
             document.getElementById('repos-container').innerHTML = `
