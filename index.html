@@ -921,7 +921,8 @@ async function loadRepositories() {
         // Filtrando os repositórios para excluir "GrafenoTTK" e "grafenottk.github.io"
         const repos = allRepos.filter(repo => 
             repo.name !== "GrafenoTTK" && 
-            repo.name !== "grafenottk.github.io"
+            repo.name !== "grafenottk.github.io" &&
+            repo.name !== "DuSete"
         );
         
         if (repos.length === 0) {
