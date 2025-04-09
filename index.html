@@ -984,12 +984,12 @@ async function loadRepositories() {
                             <span><i class="fas fa-circle" style="font-size: 0.5rem"></i> ${repo.language || 'N/A'}</span>
                         </div>
                         <div class="repo-links">
-                            <a href="${repo.html_url}" target="_blank" class="btn btn-sm">
-                                <i class="fas fa-external-link-alt"></i> Code
+                            <a href="${repo.html_url}" target="_blank" class="btn btn-sm btn-outline">
+                                <i class="fas fa-code"></i> Code
                             </a>
                             ${homepage ? `
-                                <a href="${homepage}" target="_blank" class="btn btn-sm btn-outline">
-                                    <i class="fas fa-code"></i> Download
+                                <a href="${homepage}" target="_blank" class="btn btn-sm">
+                                    <i class="fas fa-external-link-alt"></i> Download
                                 </a>
                             ` : ''}
                         </div>
