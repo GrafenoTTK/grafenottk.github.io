@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="About GrafenoTTK">
+    <meta property="og:description" content="Learn about the GrafenoTTK collective - our mission, vision, and team">
+    <meta property="og:image" content="https://github.com/GrafenoTTK/GrafenoTTK/blob/main/GRAFNEOTKlogo.jpg?raw=true">
+    <title>About | GrafenoTTK</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/vt323" rel="stylesheet">
+    <link rel="icon" href="icon.ico" type="image/x-icon">
+    <style>
+        @font-face {
+            font-family: 'Terminal';
+            src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/fonts/HTML-CSS/TeX/woff/MathJax_Main-Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        :root {
+            --primary-color: #ff0000;
+            --secondary-color: #ff00aa;
+            --dark-bg: #050510;
+            --card-bg: #101020;
+            --text-color: #e0e0e0;
+            --highlight-color: #ff3333;
+            --glow-color: rgba(255, 0, 0, 0.7);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'VT323', 'Terminal', monospace;
+            letter-spacing: 1px;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0) 0%,
+                rgba(0, 0, 0, 0) 50%,
+                rgba(0, 0, 0, 0.02) 50%,
+                rgba(0, 0, 0, 0) 100%
+            );
+            background-size: 100% 4px;
+            z-index: 9998;
+            pointer-events: none;
+            opacity: 0.2;
+        }
+
+        .crt:before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(255, 0, 0, 0.02), rgba(0, 0, 255, 0.03));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.15;
+        }
+        
+        header {
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 15px rgba(255, 0, 0, 0.2);
+            border-bottom: 1px solid var(--primary-color);
+        }
+        
+        .logo h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            text-shadow: 0 0 5px var(--glow-color);
+            letter-spacing: 2px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.2rem;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        }
+        
+        nav a:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s;
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        .page-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        
+        .page-title {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        .about-section {
+            background-color: rgba(16, 16, 32, 0.7);
+            border-radius: 5px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5), inset 0 0 50px rgba(255, 0, 170, 0.05);
+        }
+        
+        .about-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--highlight-color);
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        }
+        
+        .about-section p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            font-size: 1.2rem;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .team-member {
+            background-color: var(--card-bg);
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .team-member:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+        
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1rem;
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+        
+        .team-member h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--highlight-color);
+        }
+        
+        .team-member p {
+            color: #b0b0b0;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .partner {
+            background-color: var(--card-bg);
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .partner:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+        
+        .partner img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1rem;
+            border: 2px solid var(--secondary-color);
+            box-shadow: 0 0 15px rgba(255, 0, 170, 0.5);
+        }
+        
+        .partner h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+        
+        footer {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 3rem 5% 1rem;
+            text-align: center;
+            position: relative;
+            border-top: 1px solid var(--primary-color);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 1.1rem;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            background-color: #222;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        
+        .social-links a:hover {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            transform: translateY(-3px) rotate(5deg);
+            color: #000;
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+        
+        .copyright {
+            font-size: 0.9rem;
+            color: #777;
+            margin-top: 2rem;
+        }
+        
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 3rem auto;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -1px;
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+        
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+        
+        .timeline-content {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 5px;
+            position: relative;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .timeline-item:nth-child(odd) .timeline-content {
+            border-radius: 5px 0 5px 5px;
+        }
+        
+        .timeline-item:nth-child(even) .timeline-content {
+            border-radius: 0 5px 5px 5px;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            top: 20px;
+            z-index: 1;
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        .timeline-item:nth-child(odd)::after {
+            right: -10px;
+        }
+        
+        .timeline-item:nth-child(even)::after {
+            left: -10px;
+        }
+        
+        .timeline-date {
+            color: var(--highlight-color);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .timeline-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 10px;
+            }
+            
+            .timeline-item:nth-child(even) {
+                left: 0;
+            }
+            
+            .timeline-item::after {
+                left: 20px;
+            }
+            
+            .timeline-item:nth-child(odd)::after {
+                right: auto;
+            }
+        }
+    </style>
+</head>
+<body class="crt">
+    <!-- Scanlines -->
+    <div class="scanline"></div>
+    
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <h1 class="glitch" data-text="GrafenoTTK">GrafenoTTK</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="https://grafenotk.shop/">HOME</a></li>
+                <li><a href="https://grafenotk.shop#repositories">PROJECTS</a></li>
+                <li><a href="https://grafenotk.shop#community">COMMUNITY</a></li>
+                <li><a href="https://grafenotk.shop#channel">CHANNEL</a></li>
+                <li><a href="https://github.com/GrafenoTTK" target="_blank">GITHUB</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="page-content">
+        <h1 class="page-title">ABOUT US</h1>
+        
+        <div class="about-section">
+            <h2>Our Mission</h2>
+            <p>GrafenoTTK is a collective dedicated to creating innovative solutions for performance optimization and advanced computing. Like our namesake graphene, we aim to develop lightweight yet powerful tools that enhance computing efficiency through open source collaboration.</p>
+        </div>
+        
+        <div class="about-section">
+            <h2>Our Vision</h2>
+            <p>We strive to democratize advanced optimization techniques and high-performance computing solutions. Our work spans operating systems, software optimization, and hardware acceleration, focusing on practical applications that empower users to maximize their existing resources.</p>
+        </div>
+        
+        <div class="about-section">
+            <h2>Our Story</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">2022</div>
+                        <h3 class="timeline-title">The Beginning</h3>
+                        <p>Started with OS and emulator optimization</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">2023</div>
+                        <h3 class="timeline-title">Expanding Focus</h3>
+                        <p>Added gaming platform optimization</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">2024</div>
+                        <h3 class="timeline-title">Software Solutions</h3>
+                        <p>Broadened to include software optimization</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">2025</div>
+                        <h3 class="timeline-title">Significant Growth</h3>
+                        <p>Achieved major advancements and expanded our team</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="about-section">
+            <h2>Our Team</h2>
+            <p>GrafenoTTK is powered by specialists in optimization, UI design, and scripting.</p>
+            
+            <div class="team-grid">
+                <div class="team-member">
+                    <img src="/api/placeholder/150/150" alt="Rydaxor">
+                    <h3>Rydaxor</h3>
+                    <p>Desenvolvedor e criador de UI</p>
+                </div>
+                
+                <div class="team-member">
+                    <img src="/api/placeholder/150/150" alt="DeBaby">
+                    <h3>DeBaby</h3>
+                    <p>Desenvolvedor</p>
+                </div>
+                
+                <div class="team-member">
+                    <img src="/api/placeholder/150/150" alt="TioXsan">
+                    <h3>TioXsan</h3>
+                    <p>Scripter</p>
+                </div>
+            </div>
+            
+            <h2 style="margin-top: 3rem;">Our Partner</h2>
+            <div class="partner">
+                <img src="/api/placeholder/150/150" alt="Boladão">
+                <h3>Boladão</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="about.html">ABOUT</a>
+            <a href="support.html">SUPPORT</a>
+            <a href="privacy-policy.html">PRIVACY POLICY</a>
+            <a href="terms-of-use.html">TERMS OF USE</a>
+        </div>
+        <div class="social-links">
+            <a href="https://github.com/GrafenoTTK" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="http://youtube.com/@GrafenoTTK" target="_blank"><i class="fab fa-youtube"></i></a>
+            <a href="https://discord.gg/gBGjd7ry2w"><i class="fab fa-discord"></i></a>
+        </div>
+        <p class="copyright">© 2025 GrafenoTTK. All rights reserved.</p>
+    </footer>
+
+    <!-- Particles.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Graphene particles configuration
+        document.addEventListener("DOMContentLoaded", function() {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#ff0000"
+                    },
+                    "shape": {
+                        "type": "polygon",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 6
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.3,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 40,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#ff0000",
+                        "opacity": 0.2,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 0.5
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+        });
+    </script>
+</body>
+</html>
