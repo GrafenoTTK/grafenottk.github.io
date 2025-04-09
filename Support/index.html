@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Support | GrafenoTTK">
+    <meta property="og:description" content="Support information for GrafenoTTK services and products">
+    <meta property="og:image" content="https://github.com/GrafenoTTK/GrafenoTTK/blob/main/GRAFNEOTKlogo.jpg?raw=true">
+    <title>Support | GrafenoTTK</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/vt323" rel="stylesheet">
+    <link rel="icon" href="icon.ico" type="image/x-icon">
+    <style>
+        @font-face {
+            font-family: 'Terminal';
+            src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/fonts/HTML-CSS/TeX/woff/MathJax_Main-Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        :root {
+            --primary-color: #ff0000;
+            --secondary-color: #ff00aa;
+            --dark-bg: #050510;
+            --card-bg: #101020;
+            --text-color: #e0e0e0;
+            --highlight-color: #ff3333;
+            --glow-color: rgba(255, 0, 0, 0.7);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'VT323', 'Terminal', monospace;
+            letter-spacing: 1px;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0) 0%,
+                rgba(0, 0, 0, 0) 50%,
+                rgba(0, 0, 0, 0.02) 50%,
+                rgba(0, 0, 0, 0) 100%
+            );
+            background-size: 100% 4px;
+            z-index: 9998;
+            pointer-events: none;
+            opacity: 0.2;
+        }
+
+        .crt:before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(255, 0, 0, 0.02), rgba(0, 0, 255, 0.03));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.15;
+        }
+        
+        header {
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 15px rgba(255, 0, 0, 0.2);
+            border-bottom: 1px solid var(--primary-color);
+        }
+        
+        .logo h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            text-shadow: 0 0 5px var(--glow-color);
+            letter-spacing: 2px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.2rem;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        }
+        
+        nav a:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s;
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        .page-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        
+        .page-title {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        .support-section {
+            background-color: rgba(16, 16, 32, 0.7);
+            border-radius: 5px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5), inset 0 0 50px rgba(255, 0, 170, 0.05);
+        }
+        
+        .support-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--highlight-color);
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        }
+        
+        .support-section p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            font-size: 1.2rem;
+        }
+        
+        .support-card {
+            background-color: var(--card-bg);
+            border-radius: 5px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .support-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 0, 0, 0.2);
+        }
+        
+        .support-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--highlight-color);
+        }
+        
+        .support-card p {
+            font-size: 1.2rem;
+            line-height: 1.7;
+        }
+        
+        .support-card a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        
+        .support-card a:hover {
+            color: var(--secondary-color);
+            text-shadow: 0 0 10px var(--glow-color);
+            transform: translateX(5px);
+        }
+        
+        .discord-box {
+            background: linear-gradient(45deg, rgba(255, 0, 0, 0.1), rgba(255, 0, 170, 0.1));
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+            animation: glow 2s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+            }
+        }
+        
+        .discord-box h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--highlight-color);
+        }
+        
+        .discord-link {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.8rem 2rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.3rem;
+            border-radius: 5px;
+            transition: all 0.3s;
+            text-shadow: none;
+            border: none;
+        }
+        
+        .discord-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+        
+        .discord-icon {
+            margin-right: 10px;
+            font-size: 1.5rem;
+            vertical-align: middle;
+        }
+        
+        .faq-item {
+            background-color: var(--card-bg);
+            border-radius: 5px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .faq-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+        }
+        
+        .faq-question {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--highlight-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .faq-answer {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            display: none;
+        }
+        
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+        
+        .faq-item.active {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+        
+        footer {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 3rem 5% 1rem;
+            text-align: center;
+            position: relative;
+            border-top: 1px solid var(--primary-color);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 1.1rem;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            background-color: #222;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        
+        .social-links a:hover {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            transform: translateY(-3px) rotate(5deg);
+            color: #000;
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+        
+        .copyright {
+            font-size: 0.9rem;
+            color: #777;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .discord-box {
+                padding: 1.5rem;
+            }
+            
+            .discord-link {
+                padding: 0.7rem 1.5rem;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body class="crt">
+    <!-- Scanlines -->
+    <div class="scanline"></div>
+    
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <h1 class="glitch" data-text="GrafenoTTK">GrafenoTTK</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="https://grafenotk.shop/">HOME</a></li>
+                <li><a href="https://grafenotk.shop#repositories">PROJECTS</a></li>
+                <li><a href="https://grafenotk.shop#community">COMMUNITY</a></li>
+                <li><a href="https://grafenotk.shop#channel">CHANNEL</a></li>
+                <li><a href="https://github.com/GrafenoTTK" target="_blank">GITHUB</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="page-content">
+        <h1 class="page-title">SUPPORT</h1>
+        
+        <div class="support-section">
+            <h2>How Can We Help You?</h2>
+            <p>Welcome to GrafenoTTK Support. We're here to help you with any questions, issues, or feedback regarding our tools, services, and community. Below you'll find resources and contact information to get the assistance you need.</p>
+            
+            <div class="discord-box">
+                <h3>Join Our Discord Community</h3>
+                <p>The fastest way to get support is through our Discord server. Our team and community members are ready to help with any questions you might have.</p>
+                <a href="https://discord.gg/gBGjd7ry2w" class="discord-link" target="_blank"><i class="fab fa-discord discord-icon"></i>Join GrafenoTTK Discord</a>
+            </div>
+        </div>
+        
+        <div class="support-section">
+            <h2>Support Resources</h2>
+            
+            <div class="support-card">
+                <h3>Documentation</h3>
+                <p>Our documentation provides detailed information about our tools, features, and common troubleshooting steps.</p>
+                <a href="#documentation">Browse Documentation <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="support-card">
+                <h3>Tutorials</h3>
+                <p>Learn how to make the most of our tools with step-by-step tutorials and guides.</p>
+                <a href="#tutorials">View Tutorials <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="support-card">
+                <h3>GitHub Issues</h3>
+                <p>For technical issues or feature requests, consider opening an issue on our GitHub repository.</p>
+                <a href="https://github.com/GrafenoTTK" target="_blank">Visit GitHub <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="support-card">
+                <h3>YouTube Channel</h3>
+                <p>Check out our YouTube channel for video tutorials and announcements.</p>
+                <a href="http://youtube.com/@GrafenoTTK" target="_blank">Watch Videos <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+        
+        <div class="support-section">
+            <h2>Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    How do I install GrafenoTTK tools?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>You can download our tools from our GitHub repository. Each tool includes installation instructions in its README file. For detailed instructions, please refer to our documentation or ask for help in our Discord community.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    Are GrafenoTTK tools free to use?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, most of our tools are open-source and free to use. Some premium features or specialized tools may require a contribution, but this will be clearly indicated on the specific tool's page.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    How can I contribute to GrafenoTTK projects?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>We welcome contributions from the community! You can contribute by submitting pull requests on GitHub, reporting bugs, suggesting features, or helping other users in our Discord community. For more information on contributing, check our GitHub repository.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    Where can I report bugs or issues?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>You can report bugs and issues on our GitHub repository by opening an issue. Please include as much detail as possible about the problem, including steps to reproduce, expected behavior, and your system configuration.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="about.html">ABOUT</a>
+            <a href="support.html">SUPPORT</a>
+            <a href="privacy-policy.html">PRIVACY POLICY</a>
+            <a href="terms-of-use.html">TERMS OF USE</a>
+        </div>
+        <div class="social-links">
+            <a href="https://github.com/GrafenoTTK" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="http://youtube.com/@GrafenoTTK" target="_blank"><i class="fab fa-youtube"></i></a>
+            <a href="https://discord.gg/gBGjd7ry2w"><i class="fab fa-discord"></i></a>
+        </div>
+        <p class="copyright">© 2025 GrafenoTTK. All rights reserved.</p>
+    </footer>
+
+    <!-- Particles.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Graphene particles configuration
+        document.addEventListener("DOMContentLoaded", function() {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#ff0000"
+                    },
+                    "shape": {
+                        "type": "polygon",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 6
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.3,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 40,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#ff0000",
+                        "opacity": 0.2,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 0.5
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+            
+            // FAQ Accordion
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    item.classList.toggle('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
