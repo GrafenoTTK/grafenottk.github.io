@@ -3,114 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grafenot Key</title>
+    <title>Verificação Grafenot Key</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #121212;
-            color: #eee;
+            background: linear-gradient(135deg, #2a2a72 0%, #009ffd 100%);
+            color: #fff;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        .container {
-            background: #1e1e1e;
-            border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            background-attachment: fixed;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
             text-align: center;
-            max-width: 500px;
-            width: 90%;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .key-display {
-            margin: 20px 0;
+        
+        .logo {
+            margin-bottom: 20px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 30px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .message {
             padding: 15px;
-            background: #2a2a2a;
-            border-radius: 5px;
-            font-family: monospace;
-            font-size: 18px;
-            word-break: break-all;
-            color: #4CAF50;
-            position: relative;
+            border-radius: 10px;
+            margin-bottom: 25px;
         }
-        .timer {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #aaa;
+        
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.4);
         }
-        .button {
-            background: #4CAF50;
+        
+        .message.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.4);
+        }
+        
+        .btn {
+            background: #4caf50;
             color: white;
             border: none;
             padding: 12px 25px;
-            border-radius: 5px;
+            border-radius: 50px;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 20px;
+            transition: all 0.3s ease;
+            margin: 10px 0;
         }
-        .button:hover {
-            background: #45a049;
+        
+        .btn:hover {
+            background: #3e8e41;
+            transform: translateY(-2px);
         }
-        .loading {
-            display: inline-block;
-            margin: 20px auto;
-            border: 5px solid #333;
-            border-top: 5px solid #4CAF50;
-            border-radius: 50%;
+        
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        #loading {
+            display: none;
+            margin: 20px 0;
+        }
+        
+        .spinner {
             width: 40px;
             height: 40px;
+            margin: 0 auto;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #ffffff;
             animation: spin 1s linear infinite;
         }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .logo {
-            max-width: 150px;
-            margin-bottom: 20px;
+        
+        .return-discord {
+            display: inline-block;
+            margin-top: 20px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border: 2px solid #fff;
+            border-radius: 50px;
+            transition: all 0.3s ease;
         }
-        h1 {
-            color: #4CAF50;
-            margin-bottom: 5px;
+        
+        .return-discord:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
-        #status-message {
-            color: #ff6b6b;
-            margin: 10px 0;
+        
+        @media (max-width: 500px) {
+            .container {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>GRAFENOT KEY</h1>
-        <p>Sistema de ativação segura</p>
-        
-        <div id="keySection" style="display: none;">
-            <div class="key-display" id="keyDisplay">Gerando...</div>
-            <p class="timer" id="timer">Válido por: 12:00:00</p>
-            <button class="button" id="copyButton">Copiar Chave</button>
+        <div class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 70px; height: 70px;">
+                <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+            </svg>
         </div>
         
-        <div id="loadingSection">
-            <p id="status-message"></p>
-            <div id="loading-indicator" style="display: none;">
-                <div class="loading"></div>
-                <p>Processando...</p>
-            </div>
-            <button class="button" id="generateButton">Gerar Nova Chave</button>
+        <h1>Verificação Grafenot</h1>
+        <p>Parabéns! Você completou a primeira etapa da verificação.</p>
+        <p>Clique no botão abaixo para gerar sua chave do Grafenot.</p>
+        
+        <div id="message" class="message" style="display: none;"></div>
+        
+        <button id="generate-key" class="btn">Gerar Minha Chave</button>
+        
+        <div id="loading">
+            <div class="spinner"></div>
+            <p>Gerando sua chave, aguarde...</p>
         </div>
+        
+        <a href="https://discord.com/app" class="return-discord">Voltar para o Discord</a>
     </div>
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <script>
-    function _0x23e7(_0x2e967b,_0x91445){const _0x5abaad=_0x5aba();return _0x23e7=function(_0x23e724,_0x39c17f){_0x23e724=_0x23e724-0xd3;let _0xf89511=_0x5abaad[_0x23e724];return _0xf89511;},_0x23e7(_0x2e967b,_0x91445);}const _0x495f90=_0x23e7;(function(_0x1be3f4,_0x5623a7){const _0x2b68bd=_0x23e7,_0x2ccc0f=_0x1be3f4();while(!![]){try{const _0x152c65=-parseInt(_0x2b68bd(0xf8))/0x1+-parseInt(_0x2b68bd(0xfb))/0x2*(-parseInt(_0x2b68bd(0x11d))/0x3)+-parseInt(_0x2b68bd(0xd7))/0x4*(parseInt(_0x2b68bd(0xd9))/0x5)+-parseInt(_0x2b68bd(0xdd))/0x6+parseInt(_0x2b68bd(0xfe))/0x7+parseInt(_0x2b68bd(0xe9))/0x8+parseInt(_0x2b68bd(0x111))/0x9;if(_0x152c65===_0x5623a7)break;else _0x2ccc0f['push'](_0x2ccc0f['shift']());}catch(_0xb0ddf5){_0x2ccc0f['push'](_0x2ccc0f['shift']());}}}(_0x5aba,0x708cb));const firebaseConfig={'databaseURL':_0x495f90(0x10e),'apiKey':_0x495f90(0xd4)};firebase[_0x495f90(0x109)](firebaseConfig);const database=firebase[_0x495f90(0x130)](),generateButton=document['getElementById'](_0x495f90(0x116)),keyDisplay=document['getElementById']('keyDisplay'),timer=document[_0x495f90(0x136)](_0x495f90(0xf6)),copyButton=document[_0x495f90(0x136)](_0x495f90(0xef)),loadingIndicator=document['getElementById'](_0x495f90(0x10d)),loadingSection=document['getElementById'](_0x495f90(0x12f)),keySection=document[_0x495f90(0x136)](_0x495f90(0xe7)),statusMessage=document[_0x495f90(0x136)](_0x495f90(0x101)),LINKVERTISE_URL=_0x495f90(0xfc);function showStatus(_0x188cb2,_0x10af82=![]){const _0x38dca3=_0x495f90;statusMessage[_0x38dca3(0x12c)]=_0x188cb2,statusMessage['style']['color']=_0x10af82?_0x38dca3(0x128):_0x38dca3(0x126);}function generateHWID(){const _0x3f3b56=_0x495f90,_0x40ba5e=window[_0x3f3b56(0x127)],_0x2c3421=window['screen'],_0x1d1fe7=[_0x40ba5e[_0x3f3b56(0xe5)],_0x40ba5e[_0x3f3b56(0xf5)],_0x40ba5e[_0x3f3b56(0xea)],_0x2c3421[_0x3f3b56(0xd3)],_0x2c3421['width']+'x'+_0x2c3421['height'],new Date()[_0x3f3b56(0xf3)]()]['join']('||');function _0xedc490(_0x13257d){const _0x51144d=_0x3f3b56;let _0x361c3e=0x0;for(let _0x2cd40b=0x0;_0x2cd40b<_0x13257d['length'];_0x2cd40b++){const _0x2d690d=_0x13257d[_0x51144d(0xeb)](_0x2cd40b);_0x361c3e=(_0x361c3e<<0x5)-_0x361c3e+_0x2d690d,_0x361c3e=_0x361c3e&_0x361c3e;}return _0x361c3e[_0x51144d(0xdb)](0x10);}return _0xedc490(_0x1d1fe7);}function generateKey(){const _0x5b1d8d=_0x495f90,_0x57c112=_0x5b1d8d(0xe4);let _0x226752='';for(let _0x533a35=0x0;_0x533a35<0x8;_0x533a35++){_0x226752+=_0x57c112[_0x5b1d8d(0xd6)](Math[_0x5b1d8d(0x115)](Math[_0x5b1d8d(0xe0)]()*_0x57c112[_0x5b1d8d(0xf2)]));}_0x226752+='-';for(let _0xe74ad=0x0;_0xe74ad<0x4;_0xe74ad++){_0x226752+=_0x57c112[_0x5b1d8d(0xd6)](Math[_0x5b1d8d(0x115)](Math[_0x5b1d8d(0xe0)]()*_0x57c112[_0x5b1d8d(0xf2)]));}_0x226752+='-';for(let _0x5acc5b=0x0;_0x5acc5b<0x4;_0x5acc5b++){_0x226752+=_0x57c112[_0x5b1d8d(0xd6)](Math['floor'](Math[_0x5b1d8d(0xe0)]()*_0x57c112[_0x5b1d8d(0xf2)]));}_0x226752+='-';for(let _0xfd8625=0x0;_0xfd8625<0x4;_0xfd8625++){_0x226752+=_0x57c112['charAt'](Math[_0x5b1d8d(0x115)](Math[_0x5b1d8d(0xe0)]()*_0x57c112['length']));}return _0x226752;}function checkExistingKey(_0x1eeb70){return new Promise((_0x589730,_0x3c928d)=>{const _0x4c4a35=_0x23e7;showStatus('Verificando\x20chaves\x20existentes...'),database['ref']('keys')['orderByChild'](_0x4c4a35(0x122))[_0x4c4a35(0x10b)](_0x1eeb70)[_0x4c4a35(0xfd)](_0x4c4a35(0x10a))['then'](_0x22f7c3=>{const _0x396d22=_0x4c4a35;if(_0x22f7c3[_0x396d22(0x134)]()){let _0x5d009f=null,_0x275405=null;_0x22f7c3[_0x396d22(0x11c)](_0x581938=>{const _0x1cf96b=_0x396d22,_0xe944ee=_0x581938[_0x1cf96b(0x12a)](),_0x55b928=new Date(_0xe944ee[_0x1cf96b(0xe6)]);_0x55b928>new Date()?(_0x5d009f=_0xe944ee,_0x275405=_0x581938['key']):_0x581938[_0x1cf96b(0x11f)]['remove']();}),_0x5d009f?(showStatus(_0x396d22(0xde)),_0x589730({'exists':!![],'data':_0x5d009f,'id':_0x275405})):(showStatus(_0x396d22(0xfa)),_0x589730({'exists':![]}));}else showStatus(_0x396d22(0x131)),_0x589730({'exists':![]});})['catch'](_0x562ab5=>{const _0x31e1bf=_0x4c4a35;console[_0x31e1bf(0xec)]('Erro\x20ao\x20verificar\x20chave\x20existente:',_0x562ab5),showStatus(_0x31e1bf(0xff),!![]),_0x3c928d(_0x562ab5);});});}function saveKey(_0xbb5917,_0xbc7b5f){const _0x9b9b6d=_0x495f90;showStatus(_0x9b9b6d(0x110));const _0x3a5ff9=new Date(),_0x2e6de8=new Date(_0x3a5ff9[_0x9b9b6d(0x12e)]()+0xc*0x3c*0x3c*0x3e8),_0x547141={'key':_0xbb5917,'hwid':_0xbc7b5f,'createdAt':_0x3a5ff9[_0x9b9b6d(0x11e)](),'usedAt':_0x3a5ff9[_0x9b9b6d(0x11e)](),'expiresAt':_0x2e6de8['toISOString'](),'url':window[_0x9b9b6d(0xda)][_0x9b9b6d(0x10c)]};return database[_0x9b9b6d(0x11f)](_0x9b9b6d(0x10f))[_0x9b9b6d(0x124)](_0x547141);}function _0x5aba(){const _0x56dd59=['#ff6b6b','Veio\x20do\x20Linkvertise?','val','display','textContent','then','getTime','loadingSection','database','Nenhuma\x20chave\x20encontrada.','Erro\x20ao\x20salvar\x20chave:','Veio\x20do\x20Linkvertise,\x20gerando\x20nova\x20chave...','exists','Erro\x20ao\x20copiar\x20texto:\x20','getElementById','colorDepth','pxZ6rsjoUNhLO6bS3LppFvvygUQ9FUWQ3EN9Egl6','Nova\x20chave\x20gerada:','charAt','20CDQJoh','key','470300iqjBte','location','toString','disabled','4968570DlvPAW','Chave\x20válida\x20encontrada!','HWID\x20do\x20dispositivo:','random','addEventListener','data','Erro\x20ao\x20copiar\x20texto.','ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789','userAgent','expiresAt','keySection','.info/connected','4587744QkZhGy','platform','charCodeAt','error','Erro\x20na\x20verificação\x20de\x20chave:','clipboard','copyButton','Página\x20carregada,\x20verificando\x20condições...','/keys/','length','getTimezoneOffset','catch','language','timer','Redirecionando\x20para\x20verificação...','886195zJJUKT','Gerando\x20nova\x20chave...','Nenhuma\x20chave\x20válida\x20encontrada.','1377322jsgRnZ','https://link-target.net/670620/grafenotk-key','once','3554334mJxQyL','Erro\x20ao\x20verificar\x20chaves\x20existentes.','Válido\x20por:\x20','status-message','includes','DOMContentLoaded','link-target.net','none','click','Chave\x20salva\x20com\x20sucesso!','update','initializeApp','value','equalTo','href','loading-indicator','https://x80dusexo-default-rtdb.firebaseio.com/','keys','Salvando\x20nova\x20chave...','7881318rNZqRP','altKey','referrer','Chave\x20válida\x20encontrada:','floor','generateButton','block','writeText','Forçando\x20geração\x20de\x20chave\x20(modo\x20desenvolvimento)','log','linkvertise.com','forEach','3HnbPOJ','toISOString','ref','style','/usedAt','hwid','Conectado\x20ao\x20Firebase!','push','padStart','#4CAF50','navigator'];_0x5aba=function(){return _0x56dd59;};return _0x5aba();}function updateTimer(_0x2607db){const _0x13d5ea=setInterval(()=>{const _0x2ed268=_0x23e7,_0x350906=new Date(),_0x3752ba=new Date(_0x2607db),_0x6b5089=_0x3752ba-_0x350906;if(_0x6b5089<=0x0){clearInterval(_0x13d5ea),redirectToLinkvertise();return;}const _0x1ab304=Math[_0x2ed268(0x115)](_0x6b5089/(0x3e8*0x3c*0x3c)),_0x3bdd91=Math[_0x2ed268(0x115)](_0x6b5089%(0x3e8*0x3c*0x3c)/(0x3e8*0x3c)),_0x305e11=Math[_0x2ed268(0x115)](_0x6b5089%(0x3e8*0x3c)/0x3e8);timer['textContent']=_0x2ed268(0x100)+String(_0x1ab304)['padStart'](0x2,'0')+':'+String(_0x3bdd91)[_0x2ed268(0x125)](0x2,'0')+':'+String(_0x305e11)[_0x2ed268(0x125)](0x2,'0');},0x3e8);}function redirectToLinkvertise(){const _0x3bbeed=_0x495f90;showStatus(_0x3bbeed(0xf7)),keySection[_0x3bbeed(0x120)][_0x3bbeed(0x12b)]=_0x3bbeed(0x105),loadingSection[_0x3bbeed(0x120)]['display']=_0x3bbeed(0x117),generateButton[_0x3bbeed(0x12c)]='Redirecionando...',generateButton[_0x3bbeed(0xdc)]=!![],setTimeout(()=>{const _0x4e7fa1=_0x3bbeed;window[_0x4e7fa1(0xda)][_0x4e7fa1(0x10c)]=LINKVERTISE_URL;},0x5dc);}function initiateKeyGeneration(){const _0x478e7d=_0x495f90;showStatus(_0x478e7d(0xf9)),loadingIndicator[_0x478e7d(0x120)][_0x478e7d(0x12b)]=_0x478e7d(0x117),generateButton['style'][_0x478e7d(0x12b)]=_0x478e7d(0x105);const _0x519d19=generateHWID();console[_0x478e7d(0x11a)]('HWID\x20gerado:',_0x519d19);const _0x101ae3=generateKey();console['log'](_0x478e7d(0xd5),_0x101ae3),saveKey(_0x101ae3,_0x519d19)['then'](()=>{const _0x3ae7a6=_0x478e7d;console['log'](_0x3ae7a6(0x107)),showStatus('Chave\x20gerada\x20com\x20sucesso!'),keyDisplay[_0x3ae7a6(0x12c)]=_0x101ae3,updateTimer(new Date(new Date()['getTime']()+0xc*0x3c*0x3c*0x3e8)[_0x3ae7a6(0x11e)]()),loadingIndicator[_0x3ae7a6(0x120)]['display']=_0x3ae7a6(0x105),loadingSection[_0x3ae7a6(0x120)][_0x3ae7a6(0x12b)]=_0x3ae7a6(0x105),keySection[_0x3ae7a6(0x120)][_0x3ae7a6(0x12b)]=_0x3ae7a6(0x117);})[_0x478e7d(0xf4)](_0x16e71e=>{const _0x5ecc96=_0x478e7d;console[_0x5ecc96(0xec)](_0x5ecc96(0x132),_0x16e71e),showStatus('Erro\x20ao\x20salvar\x20chave.\x20Tente\x20novamente.',!![]),loadingIndicator[_0x5ecc96(0x120)][_0x5ecc96(0x12b)]=_0x5ecc96(0x105),generateButton[_0x5ecc96(0x120)]['display']='block';});}function checkIfFromLinkvertise(){const _0x4da17c=_0x495f90,_0x1da923=document[_0x4da17c(0x113)];if(_0x1da923[_0x4da17c(0x102)](_0x4da17c(0x11b))||_0x1da923[_0x4da17c(0x102)](_0x4da17c(0x104)))return!![];return![];}generateButton['addEventListener'](_0x495f90(0x106),redirectToLinkvertise),copyButton['addEventListener'](_0x495f90(0x106),()=>{const _0x5a2c9a=_0x495f90,_0x53de97=keyDisplay[_0x5a2c9a(0x12c)];navigator[_0x5a2c9a(0xee)][_0x5a2c9a(0x118)](_0x53de97)[_0x5a2c9a(0x12d)](()=>{const _0x254614=_0x5a2c9a,_0x49c628=copyButton[_0x254614(0x12c)];copyButton[_0x254614(0x12c)]='Copiado!',setTimeout(()=>{const _0x2ab09a=_0x254614;copyButton[_0x2ab09a(0x12c)]=_0x49c628;},0x7d0);})[_0x5a2c9a(0xf4)](_0x30bd23=>{const _0x2f00c2=_0x5a2c9a;console[_0x2f00c2(0xec)](_0x2f00c2(0x135),_0x30bd23),showStatus(_0x2f00c2(0xe3),!![]);});}),document[_0x495f90(0xe1)](_0x495f90(0x103),()=>{const _0x87ed91=_0x495f90;console[_0x87ed91(0x11a)](_0x87ed91(0xf0)),database[_0x87ed91(0x11f)](_0x87ed91(0xe8))['on'](_0x87ed91(0x10a),_0x306ff1=>{const _0x2b0bba=_0x87ed91;_0x306ff1[_0x2b0bba(0x12a)]()===!![]?console[_0x2b0bba(0x11a)](_0x2b0bba(0x123)):(console['log']('Não\x20foi\x20possível\x20conectar\x20ao\x20Firebase.'),showStatus('Erro\x20na\x20conexão\x20com\x20o\x20banco\x20de\x20dados.',!![]));});const _0x3b8859=generateHWID();console[_0x87ed91(0x11a)](_0x87ed91(0xdf),_0x3b8859);const _0x52cd8e=checkIfFromLinkvertise();console[_0x87ed91(0x11a)](_0x87ed91(0x129),_0x52cd8e),checkExistingKey(_0x3b8859)[_0x87ed91(0x12d)](_0xc0e058=>{const _0x4b331c=_0x87ed91;if(_0xc0e058[_0x4b331c(0x134)]){console['log'](_0x4b331c(0x114),_0xc0e058['data'][_0x4b331c(0xd8)]),keyDisplay[_0x4b331c(0x12c)]=_0xc0e058[_0x4b331c(0xe2)][_0x4b331c(0xd8)],updateTimer(_0xc0e058[_0x4b331c(0xe2)][_0x4b331c(0xe6)]);const _0x5076b4={};_0x5076b4[_0x4b331c(0xf1)+_0xc0e058['id']+_0x4b331c(0x121)]=new Date()[_0x4b331c(0x11e)](),database[_0x4b331c(0x11f)]()[_0x4b331c(0x108)](_0x5076b4),loadingIndicator['style'][_0x4b331c(0x12b)]=_0x4b331c(0x105),loadingSection[_0x4b331c(0x120)][_0x4b331c(0x12b)]='none',keySection[_0x4b331c(0x120)]['display']=_0x4b331c(0x117);}else _0x52cd8e?(console['log'](_0x4b331c(0x133)),initiateKeyGeneration()):(console['log']('Não\x20veio\x20do\x20Linkvertise,\x20exibindo\x20botão...'),showStatus('Clique\x20no\x20botão\x20para\x20gerar\x20uma\x20chave'),loadingIndicator[_0x4b331c(0x120)]['display']=_0x4b331c(0x105),generateButton[_0x4b331c(0x120)]['display']=_0x4b331c(0x117));})[_0x87ed91(0xf4)](_0x56b182=>{const _0x30dd74=_0x87ed91;console[_0x30dd74(0xec)](_0x30dd74(0xed),_0x56b182),showStatus('Erro\x20ao\x20verificar\x20chaves.\x20Tente\x20novamente.',!![]),loadingIndicator['style'][_0x30dd74(0x12b)]='none',generateButton[_0x30dd74(0x120)][_0x30dd74(0x12b)]=_0x30dd74(0x117);});}),document[_0x495f90(0xe1)]('keydown',_0xb2d099=>{const _0x275ca8=_0x495f90;_0xb2d099[_0x275ca8(0x112)]&&_0xb2d099['key']==='g'&&(console[_0x275ca8(0x11a)](_0x275ca8(0x119)),initiateKeyGeneration());});
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            const userId = urlParams.get('userId');
+            
+            // URL do seu servidor no Vercel
+            const apiUrl = 'https://grafenot-api.vercel.app/api/verify-key';
+            
+            const generateBtn = document.getElementById('generate-key');
+            const loadingElement = document.getElementById('loading');
+            const messageElement = document.getElementById('message');
+            
+            // Verificar se temos token e userId
+            if (!token || !userId) {
+                showMessage('Erro: Parâmetros de verificação ausentes. Por favor, retorne ao Discord e use o comando /getkey novamente.', 'error');
+                generateBtn.disabled = true;
+                return;
+            }
+            
+            generateBtn.addEventListener('click', async function() {
+                // Desabilitar botão e mostrar carregamento
+                this.disabled = true;
+                loadingElement.style.display = 'block';
+                messageElement.style.display = 'none';
+                
+                try {
+                    // Fazer a solicitação para a API no Vercel
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            token: token,
+                            userId: userId
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showMessage('Verificação bem-sucedida! Sua chave foi enviada para você no Discord. Volte para o aplicativo do Discord para ver sua chave.', 'success');
+                    } else {
+                        showMessage(`Erro: ${data.message || 'Não foi possível gerar sua chave. Por favor, tente novamente.'}`, 'error');
+                        this.disabled = false;
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    showMessage('Erro ao conectar com o servidor. Por favor, tente novamente mais tarde.', 'error');
+                    this.disabled = false;
+                } finally {
+                    loadingElement.style.display = 'none';
+                }
+            });
+            
+            function showMessage(text, type) {
+                messageElement.textContent = text;
+                messageElement.className = `message ${type}`;
+                messageElement.style.display = 'block';
+            }
+        });
     </script>
 </body>
 </html>
