@@ -94,111 +94,111 @@
 
     <script>
         // Inicializar Firebase
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "seu-projeto.firebaseapp.com",
-            databaseURL: "https://seu-projeto-firebase.firebaseio.com",
-            projectId: "seu-projeto",
-            storageBucket: "seu-projeto.appspot.com",
-            messagingSenderId: "seu-messaging-sender-id",
-            appId: "seu-app-id"
-        };
+const firebaseConfig = {
+    apiKey: "d31dce46462e29b61358c528a45ddb34b998f186",
+    authDomain: "x80dusexo.firebaseapp.com",
+    databaseURL: "https://x80dusexo.firebaseio.com",
+    projectId: "x80dusexo",
+    storageBucket: "x80dusexo.appspot.com",
+    messagingSenderId: "102606005250404693718",
+    appId: "1:102606005250404693718:web:e3e8d76ef7b3afa45ddb34"
+};
+
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// Obter parâmetros da URL
+const urlParams = new URLSearchParams(window.location.search);
+const userId = urlParams.get('userId');
+
+// Elementos DOM
+const loader = document.getElementById('loader');
+const status = document.getElementById('status');
+const returnButton = document.getElementById('returnButton');
+
+// Função para obter o fingerprint da máquina
+async function getMachineId() {
+    try {
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        return result.visitorId;
+    } catch (error) {
+        console.error("Erro ao obter fingerprint:", error);
+        return generateFallbackId();
+    }
+}
+
+// Geração de ID alternativo caso o fingerprint falhe
+function generateFallbackId() {
+    const nav = window.navigator;
+    const screen = window.screen;
+    const guid = [
+        nav.userAgent,
+        screen.height,
+        screen.width,
+        screen.colorDepth,
+        nav.language,
+        nav.platform
+    ].join('###');
+    
+    let hash = 0;
+    for (let i = 0; i < guid.length; i++) {
+        hash = ((hash << 5) - hash) + guid.charCodeAt(i);
+        hash |= 0; // Converte para inteiro de 32 bits
+    }
+    return 'fb-' + Math.abs(hash).toString(16);
+}
+
+// Função para registrar a verificação no Firebase
+async function registerVerification(machineId) {
+    if (!userId) {
+        showError("ID de usuário não encontrado. Por favor, inicie o processo novamente pelo Discord.");
+        return;
+    }
+
+    try {
+        // Registra ou atualiza o ID da máquina no Firebase
+        await database.ref('machines/' + userId).set({
+            machine_id: machineId,
+            verification_time: new Date().toISOString()
+        });
         
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        showSuccess();
+    } catch (error) {
+        console.error("Erro ao registrar verificação:", error);
+        showError("Ocorreu um erro ao processar sua verificação. Por favor, tente novamente.");
+    }
+}
 
-        // Obter parâmetros da URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const userId = urlParams.get('userId');
+// Funções UI
+function showSuccess() {
+    loader.style.display = 'none';
+    status.classList.add('success');
+    status.textContent = "Verificação concluída com sucesso! Volte ao Discord para gerar sua chave.";
+    status.style.display = 'block';
+    returnButton.style.display = 'inline-block';
+    returnButton.addEventListener('click', () => {
+        window.close();
+    });
+}
 
-        // Elementos DOM
-        const loader = document.getElementById('loader');
-        const status = document.getElementById('status');
-        const returnButton = document.getElementById('returnButton');
+function showError(message) {
+    loader.style.display = 'none';
+    status.classList.add('error');
+    status.textContent = message;
+    status.style.display = 'block';
+}
 
-        // Função para obter o fingerprint da máquina
-        async function getMachineId() {
-            try {
-                const fp = await FingerprintJS.load();
-                const result = await fp.get();
-                return result.visitorId;
-            } catch (error) {
-                console.error("Erro ao obter fingerprint:", error);
-                return generateFallbackId();
-            }
-        }
-
-        // Geração de ID alternativo caso o fingerprint falhe
-        function generateFallbackId() {
-            const nav = window.navigator;
-            const screen = window.screen;
-            const guid = [
-                nav.userAgent,
-                screen.height,
-                screen.width,
-                screen.colorDepth,
-                nav.language,
-                nav.platform
-            ].join('###');
-            
-            let hash = 0;
-            for (let i = 0; i < guid.length; i++) {
-                hash = ((hash << 5) - hash) + guid.charCodeAt(i);
-                hash |= 0; // Converte para inteiro de 32 bits
-            }
-            return 'fb-' + Math.abs(hash).toString(16);
-        }
-
-        // Função para registrar a verificação no Firebase
-        async function registerVerification(machineId) {
-            if (!userId) {
-                showError("ID de usuário não encontrado. Por favor, inicie o processo novamente pelo Discord.");
-                return;
-            }
-
-            try {
-                // Registra ou atualiza o ID da máquina no Firebase
-                await database.ref('machines/' + userId).set({
-                    machine_id: machineId,
-                    verification_time: new Date().toISOString()
-                });
-                
-                showSuccess();
-            } catch (error) {
-                console.error("Erro ao registrar verificação:", error);
-                showError("Ocorreu um erro ao processar sua verificação. Por favor, tente novamente.");
-            }
-        }
-
-        // Funções UI
-        function showSuccess() {
-            loader.style.display = 'none';
-            status.classList.add('success');
-            status.textContent = "Verificação concluída com sucesso! Volte ao Discord para gerar sua chave.";
-            status.style.display = 'block';
-            returnButton.style.display = 'inline-block';
-            returnButton.addEventListener('click', () => {
-                window.close();
-            });
-        }
-
-        function showError(message) {
-            loader.style.display = 'none';
-            status.classList.add('error');
-            status.textContent = message;
-            status.style.display = 'block';
-        }
-
-        // Iniciar o processo quando a página carregar
-        window.onload = async function() {
-            try {
-                const machineId = await getMachineId();
-                await registerVerification(machineId);
-            } catch (error) {
-                console.error("Erro durante o processo de verificação:", error);
-                showError("Ocorreu um erro durante a verificação. Por favor, tente novamente.");
-            }
-        };
+// Iniciar o processo quando a página carregar
+window.onload = async function() {
+    try {
+        const machineId = await getMachineId();
+        await registerVerification(machineId);
+    } catch (error) {
+        console.error("Erro durante o processo de verificação:", error);
+        showError("Ocorreu um erro durante a verificação. Por favor, tente novamente.");
+    }
+};
     </script>
 </body>
 </html>
