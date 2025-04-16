@@ -3,16 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GrafenoTTK Project Webhook</title>
+    <title>GrafenoTTK Discord Webhook</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/vt323" rel="stylesheet">
     <style>
+        @font-face {
+            font-family: 'Terminal';
+            src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/fonts/HTML-CSS/TeX/woff/MathJax_Main-Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
         :root {
-            --dark-bg: #1e1e2e;
-            --darker-bg: #181825;
-            --light-bg: #292938;
-            --red-accent: #ff3232;
-            --red-hover: #ff5252;
-            --text-primary: #f0f0f0;
-            --text-secondary: #c0c0c0;
+            --primary-color: #ff0000;
+            --secondary-color: #ff00aa;
+            --dark-bg: #050510;
+            --darker-bg: #030308;
+            --card-bg: #101020;
+            --light-bg: #151525;
+            --text-color: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --highlight-color: #ff3333;
+            --glow-color: rgba(255, 0, 0, 0.7);
             --border-color: #3a3a4a;
         }
         
@@ -20,13 +32,60 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-family: 'VT323', 'Terminal', monospace;
+            letter-spacing: 1px;
         }
         
         body {
             background-color: var(--dark-bg);
-            color: var(--text-primary);
+            color: var(--text-color);
             line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0) 0%,
+                rgba(0, 0, 0, 0) 50%,
+                rgba(0, 0, 0, 0.02) 50%,
+                rgba(0, 0, 0, 0) 100%
+            );
+            background-size: 100% 4px;
+            z-index: 9998;
+            pointer-events: none;
+            opacity: 0.2;
+        }
+
+        /* CRT Effect */
+        .crt:before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(255, 0, 0, 0.02), rgba(0, 0, 255, 0.03));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.15;
         }
         
         .container {
@@ -42,44 +101,89 @@
             grid-column: 1 / -1;
             text-align: center;
             padding: 20px 0;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             background-color: var(--darker-bg);
             border-radius: 10px;
-            border-bottom: 3px solid var(--red-accent);
+            border-bottom: 3px solid var(--primary-color);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 0, 0, 0.05), transparent, rgba(255, 0, 0, 0.05));
+            z-index: 0;
         }
         
         header h1 {
-            font-size: 2rem;
-            color: var(--red-accent);
-            margin-bottom: 10px;
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px var(--glow-color);
+            position: relative;
+            z-index: 1;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
         }
         
         header p {
             color: var(--text-secondary);
+            position: relative;
+            z-index: 1;
+            font-size: 1.2rem;
         }
         
         .form-section {
-            background-color: var(--darker-bg);
+            background-color: var(--card-bg);
             border-radius: 10px;
             padding: 20px;
             overflow-y: auto;
             max-height: calc(100vh - 200px);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5), inset 0 0 50px rgba(255, 0, 0, 0.03);
+            position: relative;
         }
         
         .preview-section {
-            background-color: var(--darker-bg);
+            background-color: var(--card-bg);
             border-radius: 10px;
             padding: 20px;
             display: flex;
             flex-direction: column;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5), inset 0 0 50px rgba(255, 0, 0, 0.03);
         }
         
         .section-title {
-            margin-bottom: 15px;
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+            letter-spacing: 2px;
+            position: relative;
             padding-bottom: 10px;
-            border-bottom: 2px solid var(--red-accent);
-            color: var(--text-primary);
-            font-size: 1.5rem;
+        }
+        
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            margin: 10px auto 0;
+            box-shadow: 0 0 10px var(--glow-color);
         }
         
         .input-group {
@@ -90,6 +194,7 @@
             display: block;
             margin-bottom: 5px;
             color: var(--text-secondary);
+            font-size: 1.05rem;
         }
         
         input[type="text"],
@@ -100,15 +205,18 @@
             border-radius: 5px;
             border: 1px solid var(--border-color);
             background-color: var(--light-bg);
-            color: var(--text-primary);
-            transition: border-color 0.3s;
+            color: var(--text-color);
+            transition: all 0.3s;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            letter-spacing: 0.5px;
         }
         
         input[type="text"]:focus,
         input[type="url"]:focus,
         textarea:focus {
             outline: none;
-            border-color: var(--red-accent);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
         }
         
         textarea {
@@ -122,30 +230,72 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            font-family: 'VT323', 'Terminal', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
         
         .primary-button {
-            background-color: var(--red-accent);
-            color: white;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: black;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
         }
         
         .primary-button:hover {
-            background-color: var(--red-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 0, 0, 0.3);
+            letter-spacing: 2px;
+        }
+        
+        .primary-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .primary-button:hover::before {
+            left: 100%;
         }
         
         .secondary-button {
             background-color: var(--light-bg);
-            color: var(--text-primary);
+            color: var(--text-color);
             border: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 5px;
+            position: relative;
+            overflow: hidden;
         }
         
         .secondary-button:hover {
             background-color: var(--border-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .secondary-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+        
+        .secondary-button:hover::before {
+            left: 100%;
         }
         
         .icon-button {
@@ -155,10 +305,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s;
         }
         
         .icon-button:hover {
-            color: var(--red-accent);
+            color: var(--primary-color);
+            transform: scale(1.1);
         }
         
         .button-group {
@@ -173,17 +325,19 @@
         
         .divider {
             height: 1px;
-            background-color: var(--border-color);
+            background: linear-gradient(to right, transparent, var(--primary-color), transparent);
             margin: 20px 0;
+            box-shadow: 0 0 5px var(--glow-color);
         }
         
         .embed-item {
             background-color: var(--light-bg);
             border-radius: 5px;
-            padding: 15px;
+            padding: 20px;
             margin-bottom: 20px;
             position: relative;
-            border-left: 3px solid var(--red-accent);
+            border-left: 3px solid var(--primary-color);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
         }
         
         .embed-actions {
@@ -195,11 +349,12 @@
         }
         
         .field-group {
-            background-color: rgba(0, 0, 0, 0.1);
+            background-color: rgba(0, 0, 0, 0.2);
             border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
             position: relative;
+            border-left: 2px solid rgba(255, 0, 0, 0.3);
         }
         
         .field-group-actions {
@@ -211,12 +366,14 @@
         .inline-checkbox {
             display: flex;
             align-items: center;
-            gap: 5px;
-            margin-top: 5px;
+            gap: 10px;
+            margin-top: 8px;
         }
         
         .inline-checkbox input[type="checkbox"] {
-            accent-color: var(--red-accent);
+            accent-color: var(--primary-color);
+            width: 16px;
+            height: 16px;
         }
         
         .field-row {
@@ -244,11 +401,12 @@
             height: 15px;
             border-radius: 50%;
             margin-right: 5px;
-            background-color: var(--red-accent);
+            background-color: var(--primary-color);
+            box-shadow: 0 0 5px var(--glow-color);
         }
         
         .discord-preview {
-            background-color: var(--light-bg);
+            background-color: var(--darker-bg);
             border-radius: 5px;
             padding: 15px;
             flex-grow: 1;
@@ -271,13 +429,14 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: var(--red-accent);
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: black;
             font-weight: bold;
             overflow: hidden;
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
         }
         
         .avatar img {
@@ -288,7 +447,8 @@
         
         .name {
             font-weight: bold;
-            color: white;
+            color: var(--text-color);
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
         }
         
         .timestamp {
@@ -306,31 +466,37 @@
             max-width: 300px;
             border-radius: 3px;
             margin-top: 5px;
+            border: 1px solid rgba(255, 0, 0, 0.2);
         }
         
         .embed {
             margin-left: 48px;
             margin-top: 8px;
-            padding: 8px 10px 8px 12px;
-            border-left: 4px solid var(--red-accent);
-            background-color: rgba(0, 0, 0, 0.2);
+            padding: 10px 12px;
+            border-left: 4px solid var(--primary-color);
+            background-color: rgba(0, 0, 0, 0.3);
             border-radius: 0 3px 3px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
         }
         
         .embed-title {
             font-weight: bold;
             margin-bottom: 5px;
+            color: var(--highlight-color);
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
         }
         
         .embed-description {
             margin-bottom: 8px;
             font-size: 0.95rem;
+            color: #c0c0c0;
         }
         
         .embed-image {
             max-width: 100%;
             border-radius: 3px;
             margin: 5px 0;
+            border: 1px solid rgba(255, 0, 0, 0.1);
         }
         
         .embed-fields {
@@ -347,10 +513,12 @@
         .field-name {
             font-weight: bold;
             font-size: 0.9rem;
+            color: #d0d0d0;
         }
         
         .field-value {
             font-size: 0.9rem;
+            color: #b0b0b0;
         }
         
         .embed-footer {
@@ -360,21 +528,98 @@
             font-size: 0.8rem;
             color: var(--text-secondary);
             margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .footer-icon {
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background-color: var(--border-color);
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            opacity: 0.7;
         }
         
         .url-info {
-            background-color: rgba(255, 50, 50, 0.1);
+            background-color: rgba(255, 0, 0, 0.1);
             border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-left: 3px solid var(--red-accent);
+            padding: 12px;
+            margin-bottom: 20px;
+            border-left: 3px solid var(--primary-color);
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .url-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 0, 0, 0.05), transparent);
+            z-index: 0;
+        }
+        
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background-color: var(--primary-color);
+            margin-left: 5px;
+            animation: blink 1s infinite;
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* Glitch effect */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 var(--primary-color);
+            animation: glitch-1 2s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: 2px 0 var(--secondary-color);
+            animation: glitch-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-1 {
+            0% { clip-path: inset(20% 0 40% 0); }
+            20% { clip-path: inset(60% 0 1% 0); }
+            40% { clip-path: inset(25% 0 61% 0); }
+            60% { clip-path: inset(56% 0 41% 0); }
+            80% { clip-path: inset(4% 0 97% 0); }
+            100% { clip-path: inset(67% 0 11% 0); }
+        }
+
+        @keyframes glitch-2 {
+            0% { clip-path: inset(63% 0 12% 0); }
+            20% { clip-path: inset(13% 0 76% 0); }
+            40% { clip-path: inset(96% 0 3% 0); }
+            60% { clip-path: inset(23% 0 69% 0); }
+            80% { clip-path: inset(73% 0 12% 0); }
+            100% { clip-path: inset(44% 0 14% 0); }
         }
         
         @media (max-width: 768px) {
@@ -385,67 +630,81 @@
             .embed-fields {
                 grid-template-columns: 1fr;
             }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
-<body>
+<body class="crt">
+    <!-- Scanlines -->
+    <div class="scanline"></div>
+    
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+
     <div class="container">
         <header>
-            <h1>GrafenoTTK Project Webhook</h1>
-            <p>Editor de Webhook para Discord</p>
+            <h1 class="glitch" data-text="GrafenoTTK Discord Webhook">GrafenoTTK Discord Webhook</h1>
+            <p>Advanced Discord Webhook Editor <span class="terminal-cursor"></span></p>
         </header>
         
         <section class="form-section">
-            <h2 class="section-title">Configuração do Webhook</h2>
+            <h2 class="section-title">WEBHOOK SETTINGS</h2>
             
             <div class="url-info">
-                Para todas as imagens, você deve fornecer links diretos para imagens hospedadas na web.
-                <br>Use serviços como Imgur, ImgBB, ou Discord CDN para hospedar suas imagens.
+                For all images, you must provide direct links to web-hosted images.
+                <br>Use services like Imgur, ImgBB, or Discord CDN to host your images.
             </div>
             
             <div class="input-group">
-                <label for="webhook-url">URL do Webhook *</label>
+                <label for="webhook-url">Webhook URL *</label>
                 <input type="url" id="webhook-url" placeholder="https://discord.com/api/webhooks/...">
             </div>
             
             <div class="input-group">
-                <label for="username">Nome de Usuário</label>
-                <input type="text" id="username" placeholder="Nome personalizado do webhook">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Custom webhook name">
             </div>
             
             <div class="input-group">
-                <label for="avatar-url">URL do Avatar</label>
-                <input type="url" id="avatar-url" placeholder="https://exemplo.com/avatar.png">
+                <label for="avatar-url">Avatar URL</label>
+                <input type="url" id="avatar-url" placeholder="https://example.com/avatar.png">
             </div>
             
             <div class="input-group">
-                <label for="content">Conteúdo da Mensagem</label>
-                <textarea id="content" rows="4" placeholder="Digite o conteúdo da sua mensagem..."></textarea>
+                <label for="content">Message Content</label>
+                <textarea id="content" rows="4" placeholder="Type your message content here..."></textarea>
             </div>
             
             <div class="input-group">
-                <label for="message-image-url">URL da Imagem da Mensagem (opcional)</label>
-                <input type="url" id="message-image-url" placeholder="https://exemplo.com/imagem.png">
+                <label for="message-image-url">Message Image URL (optional)</label>
+                <input type="url" id="message-image-url" placeholder="https://example.com/image.png">
             </div>
             
             <div class="divider"></div>
             
-            <h2 class="section-title">Embeds</h2>
+            <h2 class="section-title">EMBEDS</h2>
             
             <div id="embed-list">
                 <div class="embed-item" data-embed-id="1">
                     <div class="embed-actions">
-                        <button class="icon-button" title="Mover para cima">
+                        <button class="icon-button" title="Move up">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="18 15 12 9 6 15"></polyline>
                             </svg>
                         </button>
-                        <button class="icon-button" title="Mover para baixo">
+                        <button class="icon-button" title="Move down">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
                         </button>
-                        <button class="icon-button" title="Remover embed">
+                        <button class="icon-button" title="Remove embed">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -455,36 +714,36 @@
                     
                     <div class="input-group">
                         <label for="embed-title-1">
-                            <span class="color-preview" style="background-color: #ff3232;"></span>
-                            Cor e Título
+                            <span class="color-preview" style="background-color: #ff0000;"></span>
+                            Color & Title
                         </label>
                         <div class="field-row">
                             <div class="field-col">
-                                <input type="color" id="embed-color-1" value="#ff3232">
+                                <input type="color" id="embed-color-1" value="#ff0000">
                             </div>
                             <div class="field-col" style="flex: 5;">
-                                <input type="text" id="embed-title-1" placeholder="Título do embed">
+                                <input type="text" id="embed-title-1" placeholder="Embed title">
                             </div>
                         </div>
                     </div>
                     
                     <div class="input-group">
-                        <label for="embed-description-1">Descrição</label>
-                        <textarea id="embed-description-1" rows="3" placeholder="Descrição do embed..."></textarea>
+                        <label for="embed-description-1">Description</label>
+                        <textarea id="embed-description-1" rows="3" placeholder="Embed description..."></textarea>
                     </div>
                     
                     <div class="input-group">
-                        <label for="embed-image-url-1">URL da Imagem do Embed (opcional)</label>
-                        <input type="url" id="embed-image-url-1" placeholder="https://exemplo.com/imagem-embed.png">
+                        <label for="embed-image-url-1">Embed Image URL (optional)</label>
+                        <input type="url" id="embed-image-url-1" placeholder="https://example.com/embed-image.png">
                     </div>
                     
                     <div class="divider"></div>
                     
-                    <h4>Campos</h4>
+                    <h4 style="margin-bottom: 15px; color: var(--highlight-color);">Fields</h4>
                     <div class="fields-container">
                         <div class="field-group" data-field-id="1">
                             <div class="field-group-actions">
-                                <button class="icon-button" title="Remover campo">
+                                <button class="icon-button" title="Remove field">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <line x1="18" y1="6" x2="6" y2="18"></line>
                                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -492,33 +751,33 @@
                                 </button>
                             </div>
                             <div class="input-group">
-                                <label>Nome do campo</label>
-                                <input type="text" placeholder="Nome do campo">
+                                <label>Field name</label>
+                                <input type="text" placeholder="Field name">
                             </div>
                             <div class="input-group">
-                                <label>Valor do campo</label>
-                                <textarea rows="2" placeholder="Valor do campo"></textarea>
+                                <label>Field value</label>
+                                <textarea rows="2" placeholder="Field value"></textarea>
                             </div>
                             <div class="inline-checkbox">
                                 <input type="checkbox" id="field-inline-1">
-                                <label for="field-inline-1">Campo inline</label>
+                                <label for="field-inline-1">Inline field</label>
                             </div>
                         </div>
                     </div>
                     
-                    <button class="secondary-button" style="width: 100%;">
+                    <button class="secondary-button" style="width: 100%; margin-top: 10px;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
-                        Adicionar Campo
+                        Add Field
                     </button>
                     
                     <div class="divider"></div>
                     
                     <div class="input-group">
-                        <label for="embed-footer-1">Rodapé</label>
-                        <input type="text" id="embed-footer-1" placeholder="Texto do rodapé">
+                        <label for="embed-footer-1">Footer</label>
+                        <input type="text" id="embed-footer-1" placeholder="Footer text">
                     </div>
                 </div>
             </div>
@@ -529,31 +788,21 @@
                     <line x1="12" y1="8" x2="12" y2="16"></line>
                     <line x1="8" y1="12" x2="16" y2="12"></line>
                 </svg>
-                Adicionar Novo Embed
+                Add New Embed
             </button>
             
             <div class="button-group">
-                <button id="send-webhook" class="primary-button">Enviar Webhook</button>
-                <button id="save-webhook" class="secondary-button">Salvar Webhook</button>
-                <button id="clear-form" class="secondary-button">Limpar Tudo</button>
+                <button id="send-webhook" class="primary-button">Send Webhook</button>
+                <button id="save-webhook" class="secondary-button">Save Webhook</button>
+                <button id="clear-form" class="secondary-button">Clear All</button>
             </div>
         </section>
         
         <section class="preview-section">
-            <h2 class="section-title">Prévia</h2>
+            <h2 class="section-title">PREVIEW</h2>
             <div class="discord-preview">
                 <div class="discord-message">
                     <div class="message-header">
-                        <div class="avatar">W</div>
-                        <div class="name">Webhook Bot</div>
-                        <div class="timestamp">Hoje às 12:00</div>
-                    </div>
-                    <div class="message-content">Esta é uma prévia da sua mensagem.</div>
-                </div>
-            </div>
-        </section>
-    </div>
-    
-    <script src="script.js"></script>
-</body>
-</html>
+                        <div class="avatar">G</div>
+                        <div class="name">GrafenoTTK Bot</div>
+                        <div class="timestamp">Today at 12:00
