@@ -922,7 +922,9 @@ async function loadRepositories() {
         const repos = allRepos.filter(repo => 
             repo.name !== "GrafenoTTK" && 
             repo.name !== "grafenottk.github.io" &&
-            repo.name !== "DuSete"
+            repo.name !== "DuSete" &&
+            repo.name !== "D7Updates" &&
+            repo.name !== "D7ChangerLogger"
         );
         
         if (repos.length === 0) {
