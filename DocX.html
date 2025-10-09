@@ -146,6 +146,72 @@
             background: #fafafa;
         }
         
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .log-container {
+            margin-top: 20px;
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            display: none;
+        }
+        
+        .log-entry {
+            color: #a0a0a0;
+            margin-bottom: 5px;
+            padding: 3px 0;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .log-entry.success {
+            color: #4caf50;
+        }
+        
+        .log-entry.error {
+            color: #f44336;
+        }
+        
+        .log-entry.info {
+            color: #2196f3;
+        }
+        
+        .log-entry.warning {
+            color: #ff9800;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
         .preview h3 {
             margin-bottom: 15px;
             color: #333;
@@ -193,6 +259,7 @@
     <div class="container">
         <h1>📄 Processador de Imagens</h1>
         <p class="subtitle">Arraste um arquivo ZIP ou clique para selecionar</p>
+        <div style="text-align: right; color: #667eea; font-size: 12px; margin-top: -15px; margin-bottom: 15px; font-weight: 600;">Dev: RuanD</div>
         
         <div class="upload-area" id="uploadArea">
             <div class="upload-icon">📦</div>
@@ -202,6 +269,12 @@
         </div>
         
         <div class="status" id="status"></div>
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill">0%</div>
+            </div>
+        </div>
+        <div class="log-container" id="logContainer"></div>
         <div class="preview" id="preview"></div>
     </div>
 
@@ -210,6 +283,25 @@
         const fileInput = document.getElementById('fileInput');
         const status = document.getElementById('status');
         const preview = document.getElementById('preview');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const logContainer = document.getElementById('logContainer');
+
+        function addLog(message, type = 'info') {
+            const time = new Date().toLocaleTimeString('pt-BR');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${time}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            logContainer.style.display = 'block';
+        }
+
+        function updateProgress(percent) {
+            progressFill.style.width = percent + '%';
+            progressFill.textContent = Math.round(percent) + '%';
+            progressContainer.style.display = 'block';
+        }
 
         uploadArea.addEventListener('click', () => fileInput.click());
         
@@ -248,22 +340,39 @@
         async function processZip(file) {
             showStatus('processing', '<span class="spinner"></span> Processando arquivo ZIP...');
             preview.style.display = 'none';
+            logContainer.innerHTML = '';
+            updateProgress(0);
+            
+            addLog('🔍 Iniciando processamento do arquivo ZIP...', 'info');
+            addLog(`📦 Arquivo: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`, 'info');
             
             try {
+                updateProgress(10);
                 const zip = new JSZip();
+                addLog('📂 Carregando conteúdo do ZIP...', 'info');
+                
                 const contents = await zip.loadAsync(file);
+                updateProgress(25);
+                addLog(`✅ ZIP carregado com sucesso!`, 'success');
                 
                 const images = {};
+                const fileList = Object.keys(contents.files).filter(f => !contents.files[f].dir);
+                addLog(`📋 Total de arquivos no ZIP: ${fileList.length}`, 'info');
+                
+                let processedFiles = 0;
+                updateProgress(30);
                 
                 for (const filename in contents.files) {
                     const file = contents.files[filename];
                     if (!file.dir && /\.(jpg|jpeg|png|gif)$/i.test(filename)) {
                         const baseName = filename.split('/').pop();
-                        const match = baseName.match(/^(\d+)(\.{1,2})jpg$/i);
+                        const match = baseName.match(/^(\d+)(\.{1,2})(jpg|jpeg|png|gif)$/i);
                         
                         if (match) {
                             const number = parseInt(match[1]);
                             const type = match[2].length === 1 ? 'frontal' : 'dorsal';
+                            
+                            addLog(`🖼️ Processando: ${baseName} → ${type.toUpperCase()}`, 'info');
                             
                             if (!images[number]) {
                                 images[number] = {};
@@ -274,21 +383,37 @@
                                 name: baseName,
                                 data: imageData
                             };
+                            
+                            processedFiles++;
+                            const progress = 30 + (processedFiles / fileList.length) * 50;
+                            updateProgress(progress);
+                        } else {
+                            addLog(`⚠️ Arquivo ignorado (formato inválido): ${baseName}`, 'warning');
                         }
                     }
                 }
                 
                 if (Object.keys(images).length === 0) {
+                    addLog('❌ Nenhuma imagem válida encontrada!', 'error');
                     showStatus('error', '❌ Nenhuma imagem válida encontrada no formato esperado (ex: 1.jpg, 1..jpg)');
+                    updateProgress(100);
                     return;
                 }
                 
+                updateProgress(85);
+                addLog(`✅ Total de pares processados: ${Object.keys(images).length}`, 'success');
+                
                 showPreview(images);
+                updateProgress(95);
+                
                 await generateWordDocument(images);
+                updateProgress(100);
                 
             } catch (error) {
+                addLog(`❌ ERRO: ${error.message}`, 'error');
                 showStatus('error', '❌ Erro ao processar arquivo: ' + error.message);
                 console.error(error);
+                updateProgress(0);
             }
         }
         
@@ -317,16 +442,20 @@
         }
         
         async function generateWordDocument(images) {
+            addLog('📝 Iniciando geração do documento Word...', 'info');
             showStatus('processing', '<span class="spinner"></span> Gerando documento Word...');
             
             try {
                 const sortedNumbers = Object.keys(images).sort((a, b) => parseInt(a) - parseInt(b));
+                addLog(`📊 Organizando ${sortedNumbers.length} pares de imagens...`, 'info');
                 
                 let tableRows = '';
                 
                 for (const num of sortedNumbers) {
                     const frontal = images[num].frontal;
                     const dorsal = images[num].dorsal;
+                    
+                    addLog(`✏️ Adicionando par ${num} à tabela`, 'info');
                     
                     const frontalImg = frontal ? 
                         `<w:p><w:r><w:pict><v:shape style="width:200pt;height:150pt"><v:imagedata r:id="rId${num}f" o:title="${frontal.name}"/></v:shape></w:pict></w:r></w:p>` : 
@@ -348,66 +477,18 @@
                     `;
                 }
                 
-                const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" 
-            xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-            xmlns:v="urn:schemas-microsoft-com:vml"
-            xmlns:o="urn:schemas-microsoft-com:office:office">
-    <w:body>
-        <w:tbl>
-            <w:tblPr>
-                <w:tblW w:w="5000" w:type="pct"/>
-                <w:tblBorders>
-                    <w:top w:val="single" w:sz="4"/>
-                    <w:left w:val="single" w:sz="4"/>
-                    <w:bottom w:val="single" w:sz="4"/>
-                    <w:right w:val="single" w:sz="4"/>
-                    <w:insideH w:val="single" w:sz="4"/>
-                    <w:insideV w:val="single" w:sz="4"/>
-                </w:tblBorders>
-            </w:tblPr>
-            <w:tr>
-                <w:tc>
-                    <w:p>
-                        <w:pPr>
-                            <w:jc w:val="center"/>
-                        </w:pPr>
-                        <w:r>
-                            <w:rPr>
-                                <w:b/>
-                                <w:sz w:val="28"/>
-                            </w:rPr>
-                            <w:t>FRONTAL</w:t>
-                        </w:r>
-                    </w:p>
-                </w:tc>
-                <w:tc>
-                    <w:p>
-                        <w:pPr>
-                            <w:jc w:val="center"/>
-                        </w:pPr>
-                        <w:r>
-                            <w:rPr>
-                                <w:b/>
-                                <w:sz w:val="28"/>
-                            </w:rPr>
-                            <w:t>DORSAL</w:t>
-                        </w:r>
-                    </w:p>
-                </w:tc>
-            </w:tr>
-            ${tableRows}
-        </w:tbl>
-    </w:body>
-</w:document>`;
+                addLog('📄 Estrutura do documento criada', 'success');
+                addLog('⚠️ Exportação para Word em desenvolvimento', 'warning');
                 
                 showStatus('success', '✅ Documento Word gerado com sucesso! Aguarde o download...');
                 
                 setTimeout(() => {
+                    addLog('ℹ️ A funcionalidade completa de exportação estará disponível em breve', 'info');
                     showStatus('error', '⚠️ Função de geração de Word ainda em desenvolvimento. As imagens foram processadas corretamente.');
                 }, 2000);
                 
             } catch (error) {
+                addLog(`❌ ERRO na geração do documento: ${error.message}`, 'error');
                 showStatus('error', '❌ Erro ao gerar documento: ' + error.message);
                 console.error(error);
             }
