@@ -380,8 +380,15 @@
             progressFill.textContent = Math.round(percent) + '%';
             progressContainer.style.display = 'block';
         }
+        
+        function showStatus(type, message) {
+            status.className = 'status ' + type;
+            status.innerHTML = message;
+        }
 
-        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
         
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -410,10 +417,8 @@
             }
         });
         
-        function showStatus(type, message) {
-            status.className = 'status ' + type;
-            status.innerHTML = message;
-        }
+        exportWord.addEventListener('click', () => generateWordDocument());
+        exportPdf.addEventListener('click', () => generatePdfDocument());
         
         async function processZip(file) {
             showStatus('processing', '<span class="spinner"></span> Processando arquivo ZIP...');
@@ -554,9 +559,6 @@
             preview.innerHTML = html;
             preview.style.display = 'block';
         }
-        
-        exportWord.addEventListener('click', () => generateWordDocument());
-        exportPdf.addEventListener('click', () => generatePdfDocument());
         
         async function generateWordDocument() {
             if (!currentImages) return;
