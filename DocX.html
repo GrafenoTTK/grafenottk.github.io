@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Processador de Imagens para Word</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.4/pizzip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -212,6 +212,41 @@
             to { opacity: 1; transform: translateX(0); }
         }
         
+        .button-container {
+            margin-top: 20px;
+            display: none;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .export-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+        
+        .export-btn.word {
+            background: linear-gradient(135deg, #2b5797 0%, #1e3a5f 100%);
+        }
+        
+        .export-btn.pdf {
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+        }
+        
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .export-btn:active {
+            transform: translateY(0);
+        }
+        
         .preview h3 {
             margin-bottom: 15px;
             color: #333;
@@ -275,6 +310,10 @@
             </div>
         </div>
         <div class="log-container" id="logContainer"></div>
+        <div class="button-container" id="buttonContainer">
+            <button class="export-btn word" id="exportWord">📄 Exportar para Word</button>
+            <button class="export-btn pdf" id="exportPdf">📕 Exportar para PDF</button>
+        </div>
         <div class="preview" id="preview"></div>
     </div>
 
@@ -286,6 +325,11 @@
         const progressContainer = document.getElementById('progressContainer');
         const progressFill = document.getElementById('progressFill');
         const logContainer = document.getElementById('logContainer');
+        const buttonContainer = document.getElementById('buttonContainer');
+        const exportWord = document.getElementById('exportWord');
+        const exportPdf = document.getElementById('exportPdf');
+        
+        let currentImages = null;
 
         function addLog(message, type = 'info') {
             const time = new Date().toLocaleTimeString('pt-BR');
@@ -403,10 +447,15 @@
                 updateProgress(85);
                 addLog(`✅ Total de pares processados: ${Object.keys(images).length}`, 'success');
                 
+                currentImages = images;
+                
                 showPreview(images);
                 updateProgress(95);
                 
-                await generateWordDocument(images);
+                buttonContainer.style.display = 'flex';
+                addLog('✅ Processamento concluído! Escolha o formato de exportação.', 'success');
+                
+                showStatus('success', '✅ Imagens processadas com sucesso! Clique em um dos botões para exportar.');
                 updateProgress(100);
                 
             } catch (error) {
@@ -441,55 +490,181 @@
             preview.style.display = 'block';
         }
         
-        async function generateWordDocument(images) {
+        exportWord.addEventListener('click', () => generateWordDocument());
+        exportPdf.addEventListener('click', () => generatePdfDocument());
+        
+        async function generateWordDocument() {
+            if (!currentImages) return;
+            
             addLog('📝 Iniciando geração do documento Word...', 'info');
             showStatus('processing', '<span class="spinner"></span> Gerando documento Word...');
             
             try {
-                const sortedNumbers = Object.keys(images).sort((a, b) => parseInt(a) - parseInt(b));
+                const sortedNumbers = Object.keys(currentImages).sort((a, b) => parseInt(a) - parseInt(b));
                 addLog(`📊 Organizando ${sortedNumbers.length} pares de imagens...`, 'info');
                 
-                let tableRows = '';
+                // Criar HTML para o documento
+                let htmlContent = `
+                    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                    <head>
+                        <meta charset='utf-8'>
+                        <title>Imagens Frontal e Dorsal</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; }
+                            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                            th, td { border: 1px solid #000; padding: 10px; text-align: center; }
+                            th { background-color: #4472C4; color: white; font-size: 14pt; font-weight: bold; }
+                            img { max-width: 300px; max-height: 400px; }
+                        </style>
+                    </head>
+                    <body>
+                        <table>
+                            <tr>
+                                <th>FRONTAL</th>
+                                <th>DORSAL</th>
+                            </tr>
+                `;
                 
                 for (const num of sortedNumbers) {
-                    const frontal = images[num].frontal;
-                    const dorsal = images[num].dorsal;
+                    const frontal = currentImages[num].frontal;
+                    const dorsal = currentImages[num].dorsal;
                     
                     addLog(`✏️ Adicionando par ${num} à tabela`, 'info');
                     
                     const frontalImg = frontal ? 
-                        `<w:p><w:r><w:pict><v:shape style="width:200pt;height:150pt"><v:imagedata r:id="rId${num}f" o:title="${frontal.name}"/></v:shape></w:pict></w:r></w:p>` : 
-                        '<w:p><w:r><w:t>Imagem não disponível</w:t></w:r></w:p>';
+                        `<img src="data:image/jpeg;base64,${frontal.data}" alt="${frontal.name}">` : 
+                        '<p>Imagem não disponível</p>';
                     
                     const dorsalImg = dorsal ? 
-                        `<w:p><w:r><w:pict><v:shape style="width:200pt;height:150pt"><v:imagedata r:id="rId${num}d" o:title="${dorsal.name}"/></v:shape></w:pict></w:r></w:p>` : 
-                        '<w:p><w:r><w:t>Imagem não disponível</w:t></w:r></w:p>';
+                        `<img src="data:image/jpeg;base64,${dorsal.data}" alt="${dorsal.name}">` : 
+                        '<p>Imagem não disponível</p>';
                     
-                    tableRows += `
-                        <w:tr>
-                            <w:tc>
-                                ${frontalImg}
-                            </w:tc>
-                            <w:tc>
-                                ${dorsalImg}
-                            </w:tc>
-                        </w:tr>
+                    htmlContent += `
+                        <tr>
+                            <td>${frontalImg}</td>
+                            <td>${dorsalImg}</td>
+                        </tr>
                     `;
                 }
                 
-                addLog('📄 Estrutura do documento criada', 'success');
-                addLog('⚠️ Exportação para Word em desenvolvimento', 'warning');
+                htmlContent += `
+                        </table>
+                    </body>
+                    </html>
+                `;
                 
-                showStatus('success', '✅ Documento Word gerado com sucesso! Aguarde o download...');
+                // Converter para Blob e fazer download
+                const blob = new Blob(['\ufeff', htmlContent], {
+                    type: 'application/msword'
+                });
                 
-                setTimeout(() => {
-                    addLog('ℹ️ A funcionalidade completa de exportação estará disponível em breve', 'info');
-                    showStatus('error', '⚠️ Função de geração de Word ainda em desenvolvimento. As imagens foram processadas corretamente.');
-                }, 2000);
+                addLog('💾 Gerando arquivo para download...', 'info');
+                saveAs(blob, 'imagens_frontal_dorsal.doc');
+                
+                addLog('✅ Documento Word gerado com sucesso!', 'success');
+                showStatus('success', '✅ Documento Word baixado com sucesso!');
                 
             } catch (error) {
                 addLog(`❌ ERRO na geração do documento: ${error.message}`, 'error');
                 showStatus('error', '❌ Erro ao gerar documento: ' + error.message);
+                console.error(error);
+            }
+        }
+        
+        async function generatePdfDocument() {
+            if (!currentImages) return;
+            
+            addLog('📕 Iniciando geração do documento PDF...', 'info');
+            showStatus('processing', '<span class="spinner"></span> Gerando documento PDF...');
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                const sortedNumbers = Object.keys(currentImages).sort((a, b) => parseInt(a) - parseInt(b));
+                addLog(`📊 Organizando ${sortedNumbers.length} pares de imagens no PDF...`, 'info');
+                
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 10;
+                const imgWidth = (pageWidth - margin * 3) / 2;
+                const imgHeight = 80;
+                
+                // Adicionar título
+                pdf.setFontSize(16);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('FRONTAL', margin + imgWidth/2, 20, { align: 'center' });
+                pdf.text('DORSAL', pageWidth/2 + margin + imgWidth/2, 20, { align: 'center' });
+                
+                let yPosition = 30;
+                let firstPage = true;
+                
+                for (let i = 0; i < sortedNumbers.length; i++) {
+                    const num = sortedNumbers[i];
+                    const frontal = currentImages[num].frontal;
+                    const dorsal = currentImages[num].dorsal;
+                    
+                    addLog(`✏️ Adicionando par ${num} ao PDF`, 'info');
+                    
+                    // Verificar se precisa de nova página
+                    if (yPosition + imgHeight + margin > pageHeight) {
+                        pdf.addPage();
+                        yPosition = 20;
+                        firstPage = false;
+                    }
+                    
+                    // Adicionar imagem frontal
+                    if (frontal) {
+                        try {
+                            pdf.addImage(
+                                'data:image/jpeg;base64,' + frontal.data,
+                                'JPEG',
+                                margin,
+                                yPosition,
+                                imgWidth,
+                                imgHeight
+                            );
+                        } catch (e) {
+                            pdf.setFontSize(10);
+                            pdf.text('Erro ao carregar', margin + 10, yPosition + 40);
+                        }
+                    } else {
+                        pdf.setFontSize(10);
+                        pdf.text('Imagem não disponível', margin + 10, yPosition + 40);
+                    }
+                    
+                    // Adicionar imagem dorsal
+                    if (dorsal) {
+                        try {
+                            pdf.addImage(
+                                'data:image/jpeg;base64,' + dorsal.data,
+                                'JPEG',
+                                pageWidth/2 + margin,
+                                yPosition,
+                                imgWidth,
+                                imgHeight
+                            );
+                        } catch (e) {
+                            pdf.setFontSize(10);
+                            pdf.text('Erro ao carregar', pageWidth/2 + margin + 10, yPosition + 40);
+                        }
+                    } else {
+                        pdf.setFontSize(10);
+                        pdf.text('Imagem não disponível', pageWidth/2 + margin + 10, yPosition + 40);
+                    }
+                    
+                    yPosition += imgHeight + margin;
+                }
+                
+                addLog('💾 Gerando arquivo PDF para download...', 'info');
+                pdf.save('imagens_frontal_dorsal.pdf');
+                
+                addLog('✅ Documento PDF gerado com sucesso!', 'success');
+                showStatus('success', '✅ Documento PDF baixado com sucesso!');
+                
+            } catch (error) {
+                addLog(`❌ ERRO na geração do PDF: ${error.message}`, 'error');
+                showStatus('error', '❌ Erro ao gerar PDF: ' + error.message);
                 console.error(error);
             }
         }
