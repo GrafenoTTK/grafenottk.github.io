@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@rd7void - Links</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background futurista animado */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.03) 50%, transparent 100%),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);
+            animation: scan 8s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* Grid futurista */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 90%;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Profile Section */
+        .profile {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-pic-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            position: relative;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .profile-pic-border {
+            width: 100%;
+            height: 100%;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            padding: 5px;
+            background: linear-gradient(45deg, #ffffff, #666666, #ffffff);
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid #000000;
+            object-fit: cover;
+            animation: rotate 20s linear infinite reverse;
+        }
+
+        .username {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #ffffff, #999999, #ffffff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .instagram-handle {
+            font-size: 16px;
+            color: #cccccc;
+            letter-spacing: 1px;
+        }
+
+        /* Links Section */
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .link-button {
+            display: block;
+            padding: 18px 30px;
+            text-decoration: none;
+            color: #ffffff;
+            background: transparent;
+            border: 2px solid #ffffff;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-align: center;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out backwards;
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+
+        .link-button:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .link-button:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .link-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .link-button:hover {
+            color: #000000;
+            border-color: #ffffff;
+            box-shadow: 0 0 30px rgba(255,255,255,0.4);
+            transform: translateY(-3px);
+        }
+
+        .link-button:hover::before {
+            left: 0;
+        }
+
+        .link-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Glitch effect no hover */
+        .link-button:hover .button-text {
+            animation: glitch 0.3s ease;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 12px;
+            color: #666666;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .username {
+                font-size: 20px;
+            }
+
+            .link-button {
+                padding: 15px 20px;
+                font-size: 14px;
+            }
+        }
+
+        /* Particles effect */
+        .particle {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: #ffffff;
+            pointer-events: none;
+            z-index: 0;
+            animation: float 15s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes cursorFade {
+            to {
+                opacity: 0;
+                transform: scale(2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles -->
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+    <div class="particle" style="left: 70%; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 8s;"></div>
+
+    <div class="container">
+        <!-- Profile Section -->
+        <div class="profile">
+            <div class="profile-pic-container">
+                <div class="profile-pic-border">
+                    <img src="https://i.imgur.com/w6mBDHq.jpeg" alt="@rd7void" class="profile-pic">
+                </div>
+            </div>
+            <h1 class="username">RD7VOID</h1>
+            <p class="instagram-handle">@rd7void</p>
+        </div>
+
+        <!-- Links Section -->
+        <div class="links">
+            <a href="https://grafenotk.shop/" class="link-button" target="_blank" rel="noopener noreferrer">
+                <span class="button-text">GrafenoTK</span>
+            </a>
+            <a href="https://rd7void.discloud.app/" class="link-button" target="_blank" rel="noopener noreferrer">
+                <span class="button-text">Sobre Mim</span>
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2025 RD7VOID</p>
+        </div>
+    </div>
+
+    <script>
+        // Efeito de cursor futurista
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.createElement('div');
+            cursor.style.cssText = `
+                position: fixed;
+                width: 4px;
+                height: 4px;
+                background: white;
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9999;
+                left: ${e.clientX}px;
+                top: ${e.clientY}px;
+                opacity: 0.5;
+                animation: cursorFade 1s ease-out forwards;
+            `;
+            document.body.appendChild(cursor);
+
+            setTimeout(() => cursor.remove(), 1000);
+        });
+    </script>
+</body>
+</html>
