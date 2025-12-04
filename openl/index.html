@@ -119,37 +119,36 @@
             Clique no botão abaixo para abrir o aplicativo Launcher OS14 em seu dispositivo Android.
         </p>
 
-        <a href="android-app://com.launcher.os14.launcher/" class="btn">
+        <button class="btn" id="abrirApp">
             🚀 Abrir Aplicativo
-        </a>
+        </button>
 
         <div class="info">
             <strong>ℹ️ Informações:</strong><br>
-            Este link funcionará apenas em dispositivos Android com o app Launcher OS14 instalado. 
-            Se o app não estiver instalado, será solicitado que você instale ou use outro launcher.
+            Clique no botão para abrir o Deep OS Launcher diretamente em seu dispositivo Android.
         </div>
     </div>
 
     <script>
-        // Detectar se está em Android
-        function isAndroid() {
-            return /Android/i.test(navigator.userAgent);
-        }
-
-        // Verificar ao carregar a página
-        window.addEventListener('load', function() {
-            const btn = document.querySelector('.btn');
-            if (!isAndroid()) {
-                const info = document.querySelector('.info');
-                info.innerHTML += '<br><br><strong>⚠️ Aviso:</strong> Você não está em um dispositivo Android. Este link funcionará apenas em Android.';
-                btn.style.opacity = '0.5';
-                btn.style.cursor = 'not-allowed';
-            }
-        });
-
-        // Log quando o link é clicado
-        document.querySelector('.btn').addEventListener('click', function(e) {
-            console.log('Tentando abrir Launcher OS14...');
+        document.getElementById('abrirApp').addEventListener('click', function() {
+            // Método mais direto: usar a activity padrão do app
+            const packageName = 'com.launcher.os14.launcher';
+            
+            // Tenta abrir com intent direto (mais confiável)
+            window.location.href = 'intent://' + packageName + '#Intent;end';
+            
+            // Fallback após 2 segundos se o intent não funcionar
+            setTimeout(function() {
+                // Segundo método: usar scheme do app
+                window.location.href = 'android-app://' + packageName;
+            }, 2000);
+            
+            // Terceiro método: intent com action MAIN
+            setTimeout(function() {
+                window.location.href = 'intent://#Intent;action=android.intent.action.MAIN;package=' + packageName + ';end';
+            }, 4000);
+            
+            console.log('Tentando abrir: ' + packageName);
         });
     </script>
 </body>
