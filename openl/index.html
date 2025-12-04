@@ -119,36 +119,40 @@
             Clique no botão abaixo para abrir o aplicativo Launcher OS14 em seu dispositivo Android.
         </p>
 
-        <button class="btn" id="abrirApp">
-            🚀 Abrir Aplicativo
+        <button class="btn" id="abrirLauncher">
+            🚀 Abrir Launcher OS14
+        </button>
+
+        <button class="btn" id="abrirSettings" style="background-color: #627c7d; margin-top: 12px;">
+            ⚙️ Abrir Configurações
+        </button>
+
+        <button class="btn" id="abrirChrome" style="background-color: #d94231; margin-top: 12px;">
+            🌐 Abrir Chrome
         </button>
 
         <div class="info">
             <strong>ℹ️ Informações:</strong><br>
-            Clique no botão para abrir o Deep OS Launcher diretamente em seu dispositivo Android.
+            Clique em qualquer botão para abrir o aplicativo diretamente em seu dispositivo Android.
         </div>
     </div>
 
     <script>
-        document.getElementById('abrirApp').addEventListener('click', function() {
-            // Método mais direto: usar a activity padrão do app
-            const packageName = 'com.launcher.os14.launcher';
-            
-            // Tenta abrir com intent direto (mais confiável)
-            window.location.href = 'intent://' + packageName + '#Intent;end';
-            
-            // Fallback após 2 segundos se o intent não funcionar
-            setTimeout(function() {
-                // Segundo método: usar scheme do app
-                window.location.href = 'android-app://' + packageName;
-            }, 2000);
-            
-            // Terceiro método: intent com action MAIN
-            setTimeout(function() {
-                window.location.href = 'intent://#Intent;action=android.intent.action.MAIN;package=' + packageName + ';end';
-            }, 4000);
-            
+        function abrirApp(packageName) {
+            window.location.href = 'intent://' + packageName + '/#Intent;scheme=android-app;end';
             console.log('Tentando abrir: ' + packageName);
+        }
+
+        document.getElementById('abrirLauncher').addEventListener('click', function() {
+            abrirApp('com.launcher.os14.launcher');
+        });
+
+        document.getElementById('abrirSettings').addEventListener('click', function() {
+            abrirApp('com.android.settings');
+        });
+
+        document.getElementById('abrirChrome').addEventListener('click', function() {
+            abrirApp('com.android.chrome');
         });
     </script>
 </body>
