@@ -1,0 +1,77 @@
+# RD7BestPlayer-Installer.ps1
+$ErrorActionPreference = "Stop"
+
+$repoOwner = "McGrawBot"
+$repoName  = "RD7BestPlayer"
+
+$desktop   = [Environment]::GetFolderPath("Desktop")
+$baseDir   = "$env:LOCALAPPDATA\RD7BestPlayer"
+$zipPath   = Join-Path $baseDir "RD7BestPlayer.zip"
+$exePath   = Join-Path $baseDir "RD7BestPlayer.exe"
+$shortcutPath = Join-Path $desktop "RD7BestPlayer.lnk"
+
+# Cria pasta base
+if (-not (Test-Path $baseDir)) {
+    New-Item -Path $baseDir -ItemType Directory | Out-Null
+}
+
+Write-Host "Buscando último release no GitHub..." -ForegroundColor Cyan
+
+# Pega metadados do último release (API oficial GitHub)
+$releaseUrl = "https://api.github.com/repos/$repoOwner/$repoName/releases/latest"
+$release    = Invoke-RestMethod -Uri $releaseUrl -Headers @{ "User-Agent" = "PowerShell" }
+
+# Procura primeiro asset .zip
+$asset = $release.assets | Where-Object { $_.name -like "*.zip" } | Select-Object -First 1
+
+if (-not $asset) {
+    Write-Host "Nenhum arquivo .zip encontrado no último release." -ForegroundColor Red
+    exit 1
+}
+
+$downloadUrl = $asset.browser_download_url
+Write-Host "Encontrado: $($asset.name)"
+Write-Host "Baixando de: $downloadUrl"
+
+# Baixa o zip
+Invoke-WebRequest -Uri $downloadUrl -OutFile $zipPath
+
+Write-Host "Extraindo para $baseDir..." -ForegroundColor Cyan
+
+# Limpa tudo que tiver na pasta antes de extrair (opcional)
+Get-ChildItem $baseDir -Recurse -Force | Where-Object { $_.FullName -ne $zipPath } | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+
+# Extrai
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+[System.IO.Compression.ZipFile]::ExtractToDirectory($zipPath, $baseDir, $true)
+
+# Apaga o zip
+Remove-Item $zipPath -Force
+
+# Procura RD7BestPlayer.exe dentro da pasta (às vezes vem em subpasta)
+$exe = Get-ChildItem -Path $baseDir -Recurse -Filter "RD7BestPlayer.exe" | Select-Object -First 1
+if (-not $exe) {
+    Write-Host "RD7BestPlayer.exe não encontrado após extração." -ForegroundColor Red
+    exit 1
+}
+
+$exePath = $exe.FullName
+Write-Host "Executável encontrado em: $exePath" -ForegroundColor Green
+
+# Cria atalho na área de trabalho
+Write-Host "Criando atalho na Área de Trabalho..." -ForegroundColor Cyan
+
+$wshShell = New-Object -ComObject WScript.Shell
+$shortcut = $wshShell.CreateShortcut($shortcutPath)
+$shortcut.TargetPath = $exePath
+$shortcut.WorkingDirectory = Split-Path $exePath
+$shortcut.WindowStyle = 1
+$shortcut.IconLocation = "$exePath,0"
+$shortcut.Description = "RD7BestPlayer"
+$shortcut.Save()
+
+Write-Host "Atalho criado em: $shortcutPath" -ForegroundColor Green
+
+# Executa o player
+Write-Host "Iniciando RD7BestPlayer..." -ForegroundColor Cyan
+Start-Process -FilePath $exePath -WorkingDirectory (Split-Path $exePath)
